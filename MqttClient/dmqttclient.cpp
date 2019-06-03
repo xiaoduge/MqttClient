@@ -7,9 +7,9 @@
 
 DMqttClient *gMqttClient;
 
-void clientReadMqtt(void *pbuf, int len)
+void clientReadMqtt(void *ptopic, int topiclen, void *pbuf, int len)
 {
-    gMqttClient->readMqtt(pbuf, len);
+    gMqttClient->readMqtt(ptopic, topiclen, pbuf, len);
 }
 
 DMqttClient::DMqttClient(QObject *parent) :
@@ -32,8 +32,11 @@ void DMqttClient::startMqttWork()
     }
 }
 
-void DMqttClient::readMqtt(void *pbuf, int len)
+void DMqttClient::readMqtt(void *ptopic, int topiclen, void *pbuf, int len)
 {
+    qDebug() << QString("topic: %1, topicLen: %2").arg((char*)ptopic).arg(topiclen);
+    qDebug() << QString("Message: %1, len: %2").arg((char*)pbuf).arg(len);
+
     QByteArray array((char*)pbuf, len);
     QFile file("/opt/mqttTempFile/subscribeFile.txt");
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text))

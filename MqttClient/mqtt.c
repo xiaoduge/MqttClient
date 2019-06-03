@@ -20,7 +20,7 @@
 #include "fcntl.h"
 
 
-#define MQTT_TOPIC_SIZE     (128)		//订阅和发布主题长度
+#define MQTT_TOPIC_SIZE     (64)		//订阅和发布主题长度 128
 #define MQTT_BUF_SIZE       (8 * 1024) 	//接收后发送缓冲区大小
 
 //#define LOCALTEST
@@ -32,18 +32,18 @@
 #define MQTT_PASS "password"			//密码
 #define MQTT_CLIENT_ID "17849359"		//客户端标识
 #else
-//#define MQTT_HOST "post-cn-45915hnwx0s.mqtt.aliyuncs.com"		//ip地址
-//#define MQTT_PORT 1883		                                    //端口号
-//#define MQTT_USER "Signature|LTAImHaSmhVAYxwa|post-cn-45915hnwx0s"				//用户名
-//#define MQTT_PASS "2K+GxOex181rU4IzbFi0ZIBbkaE="			//密码
-//#define MQTT_CLIENT_ID "TEST_CLIENT_1"		//客户端标识
+#define MQTT_HOST "post-cn-45915hnwx0s.mqtt.aliyuncs.com"		//ip地址
+#define MQTT_PORT 1883		                                    //端口号
+#define MQTT_USER "Signature|LTAImHaSmhVAYxwa|post-cn-45915hnwx0s"				//用户名
+#define MQTT_PASS "2K+GxOex181rU4IzbFi0ZIBbkaE="			//密码
+#define MQTT_CLIENT_ID "TEST_CLIENT_1"		//客户端标识
 
 //免费服务器测试
-#define MQTT_HOST "broker.mqttdashboard.com"		//ip地址
-#define MQTT_PORT 1883		                                    //端口号
-#define MQTT_USER ""				//用户名
-#define MQTT_PASS ""			//密码
-#define MQTT_CLIENT_ID "clientId-x1ho1izVJRdcjGenie"		//客户端标识
+//#define MQTT_HOST "broker.mqttdashboard.com"		//ip地址
+//#define MQTT_PORT 1883		                                    //端口号
+//#define MQTT_USER ""				//用户名
+//#define MQTT_PASS ""			//密码
+//#define MQTT_CLIENT_ID "clientId-x1ho1izVJRdcjGenie"		//客户端标识
 
 #endif
 
@@ -108,8 +108,8 @@ void iot_mqtt_init(Cloud_MQTT_t *piot_mqtt)
     sprintf(piot_mqtt->sub_topic, "%s%s/todev", gateway.model, gateway.company);	//将初始化好的订阅主题填到数组中
     sprintf(piot_mqtt->pub_topic, "%s%s/toapp", gateway.model, gateway.company);	//将初始化好的发布主题填到数组中
 #else
-    strcpy(piot_mqtt->sub_topic, "rephile/dcj/client");
-    strcpy(piot_mqtt->pub_topic, "rephile/dcj/client");	//将初始化好的发布主题填到数组中
+    strcpy(piot_mqtt->sub_topic, "rephile/TEST_CLIENT");
+    strcpy(piot_mqtt->pub_topic, "rephile/TEST_CLIENT");	//将初始化好的发布主题填到数组中
 #endif
     printf("subscribe:%s\n", piot_mqtt->sub_topic);
     printf("pub:%s\n", piot_mqtt->pub_topic);
@@ -120,12 +120,16 @@ void iot_mqtt_init(Cloud_MQTT_t *piot_mqtt)
 void MQTTMessageArrived_Cb(MessageData* md)
 {
     MQTTMessage *message = md->message; 
+    MQTTString *topic = md->topicName;
 
     Cloud_MQTT_t *piot_mqtt = &Iot_mqtt;
 
     if (NULL != piot_mqtt->DataArrived_Cb)
     {
-        piot_mqtt->DataArrived_Cb((void *)message->payload, message->payloadlen);//异步消息体
+        piot_mqtt->DataArrived_Cb((void*)topic->lenstring.data,
+                                  topic->lenstring.len,
+                                  (void *)message->payload,
+                                  message->payloadlen);//异步消息体
     }
 }
 
@@ -243,10 +247,10 @@ int mqtt_will_msg_set(Cloud_MQTT_t *piot_mqtt, char *pbuf, int len)//设置遗�
 
 }
 
-void mqtt_data_rx_cb(void *pbuf, int len) 
+void mqtt_data_rx_cb(void *ptopic, int topiclen, void *pbuf, int len)
 {
-    printf("data = %s\n", (unsigned char *)pbuf);	//打印接收到的数据
-    clientReadMqtt(pbuf, len);
+//    printf("data = %s\n", (unsigned char *)pbuf);	//打印接收到的数据
+    clientReadMqtt(ptopic, topiclen, pbuf, len);
 }
 
 int mqtt_data_write(char *pbuf, int len, char retain)
@@ -271,7 +275,7 @@ int mqtt_data_write(char *pbuf, int len, char retain)
     //message.payload = (void *)pbuf;
     message.payloadlen = len;
     message.dup = 0;
-    message.qos = QOS2;
+    message.qos = QOS0;
     if (retain) {
         message.retained = 1;
     } else {

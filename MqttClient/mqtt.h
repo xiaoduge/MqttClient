@@ -19,16 +19,15 @@ enum  iot_ctrl_status_t
     IOT_STATUS_DROP
 };
 
-typedef void  (*pMessageArrived_Fun)(void*,int len);
+typedef void  (*pMessageArrived_Fun)(void* ,int topicLen, void*, int len);
 
 void mqtt_module_init(void);
 int mqtt_data_write(char *pbuf, int len, char retain);
-void mqtt_data_rx_cb(void *pbuf, int len);
+void mqtt_data_rx_cb(void *ptopic, int topiclen, void *pbuf, int len);
 
-void mqtt_data_rx_cb(void *pbuf, int len);
 void *cloud_mqtt_thread();
 
-void clientReadMqtt(void *pbuf, int len);
+void clientReadMqtt(void *ptopic, int topiclen, void *pbuf, int len);
 
 #define mDEBUG(fmt, ...)  printf("%s[%s](%d):" fmt,__FILE__,__FUNCTION__,__LINE__,##__VA_ARGS__)
 

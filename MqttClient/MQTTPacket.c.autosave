@@ -224,7 +224,7 @@ int readMQTTLenString(MQTTString* mqttstring, unsigned char** pptr, unsigned cha
 		if (&(*pptr)[mqttstring->lenstring.len] <= enddata)
 		{
 //			mqttstring->lenstring.data = (char*)*pptr;
-            memcpy(mqttstring->lenstring.data, (char*)*pptr, mqttstring->lenstring.len);
+            memcpy(mqttstring->lenstring.data, (char*)*pptr, mqttstring->lenstring.len); //dcj
 			*pptr += mqttstring->lenstring.len;
 			rc = 1;
 		}

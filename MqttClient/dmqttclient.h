@@ -13,7 +13,7 @@ public:
 
     void startMqttWork();
 
-    void readMqtt(void *pbuf, int len);
+    void readMqtt(void *ptopic, int topiclen, void *pbuf, int len);
 
 private slots:
     void on_fileWatcher_fileChanged(const QString& fileName);
