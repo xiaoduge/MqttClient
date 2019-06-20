@@ -190,7 +190,6 @@ int getLenStringLen(char* ptr)
 	return len;
 }
 
-
 void writeMQTTString(unsigned char** pptr, MQTTString mqttstring)
 {
 	if (mqttstring.lenstring.len > 0)
@@ -223,8 +222,7 @@ int readMQTTLenString(MQTTString* mqttstring, unsigned char** pptr, unsigned cha
 		mqttstring->lenstring.len = readInt(pptr); /* increments pptr to point past length */
 		if (&(*pptr)[mqttstring->lenstring.len] <= enddata)
 		{
-//			mqttstring->lenstring.data = (char*)*pptr;
-            memcpy(mqttstring->lenstring.data, (char*)*pptr, mqttstring->lenstring.len);
+            mqttstring->lenstring.data = (char*)*pptr;
 			*pptr += mqttstring->lenstring.len;
 			rc = 1;
 		}
@@ -275,9 +273,6 @@ int MQTTPacket_equals(MQTTString* a, char* bptr)
 		alen = a->lenstring.len;
 	}
 	blen = strlen(bptr);
-	
-    printf("dcj topic : %s \n", aptr);
-    printf("dcj filter: %s \n", bptr);
 
     return (alen == blen) && (strncmp(aptr, bptr, alen) == 0);
 }

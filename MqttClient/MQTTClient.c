@@ -165,7 +165,7 @@ int deliverMessage(Client* c, MQTTString* topicName, MQTTMessage* message)
     {
 //        if (c->messageHandlers[i].topicFilter != 0 && (MQTTPacket_equals(topicName, (char*)c->messageHandlers[i].topicFilter) ||
 //                isTopicMatched((char*)c->messageHandlers[i].topicFilter, topicName)))
-        if (c->messageHandlers[i].topicFilter)
+        if (c->messageHandlers[i].topicFilter != 0)
         {
             if (c->messageHandlers[i].fp != NULL)
             {
@@ -256,7 +256,6 @@ int cycle(Client* c, Timer* timer)
         {
             MQTTString topicName;
             MQTTMessage msg;
-            memset(&topicName, 0, sizeof(MQTTString)); //dcj
 
             if (MQTTDeserialize_publish((unsigned char*)&msg.dup, (int*)&msg.qos, (unsigned char*)&msg.retained, (unsigned short*)&msg.id, &topicName,
                (unsigned char**)&msg.payload, (int*)&msg.payloadlen, c->readbuf, c->readbuf_size) != 1)

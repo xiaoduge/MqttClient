@@ -32,18 +32,18 @@
 #define MQTT_PASS "password"			//密码
 #define MQTT_CLIENT_ID "17849359"		//客户端标识
 #else
-#define MQTT_HOST "post-cn-45915hnwx0s.mqtt.aliyuncs.com"		//ip地址
-#define MQTT_PORT 1883		                                    //端口号
-#define MQTT_USER "Signature|LTAImHaSmhVAYxwa|post-cn-45915hnwx0s"				//用户名
-#define MQTT_PASS "2K+GxOex181rU4IzbFi0ZIBbkaE="			//密码
-#define MQTT_CLIENT_ID "TEST_CLIENT_1"		//客户端标识
+//#define MQTT_HOST "post-cn-45915hnwx0s.mqtt.aliyuncs.com"		//ip地址
+//#define MQTT_PORT 1883		                                    //端口号
+//#define MQTT_USER "Signature|LTAImHaSmhVAYxwa|post-cn-45915hnwx0s"				//用户名
+//#define MQTT_PASS "2K+GxOex181rU4IzbFi0ZIBbkaE="			//密码
+//#define MQTT_CLIENT_ID "TEST_CLIENT_1"		//客户端标识
 
 //免费服务器测试
-//#define MQTT_HOST "broker.mqttdashboard.com"		//ip地址
-//#define MQTT_PORT 1883		                                    //端口号
-//#define MQTT_USER ""				//用户名
-//#define MQTT_PASS ""			//密码
-//#define MQTT_CLIENT_ID "clientId-x1ho1izVJRdcjGenie"		//客户端标识
+#define MQTT_HOST "broker.mqttdashboard.com"		//ip地址
+#define MQTT_PORT 1883		                                    //端口号
+#define MQTT_USER ""				//用户名
+#define MQTT_PASS ""			//密码
+#define MQTT_CLIENT_ID "clientId-x1ho1izVJRdcjGenie"		//客户端标识
 
 #endif
 
@@ -267,12 +267,7 @@ int mqtt_data_write(char *pbuf, int len, char retain)
     printf("publish topic is :%s\r\n", my_topic);
     printf("mqtt tx len = %d, messge:%s\r\n", len, pbuf);
     
-    //2019.05.27 
-    message.payload = malloc(len);
-    memcpy(message.payload, (void*)pbuf, len);
-    //end
-    
-    //message.payload = (void *)pbuf;
+    message.payload = (void *)pbuf;
     message.payloadlen = len;
     message.dup = 0;
     message.qos = QOS0;
@@ -283,15 +278,14 @@ int mqtt_data_write(char *pbuf, int len, char retain)
     }
 
     ret = MQTTPublish(&piot_mqtt->Client, my_topic, &message);	//发布一个主题
-    free(message.payload); //2019.05.27
     pthread_mutex_unlock(&safe_mutex);
     return ret;
 }
 
 void *cloud_mqtt_thread()
 {
-    int ret, len; 
-    char will_msg[256] = {"hello world"};						//初始化遗嘱数据
+    int ret;
+    char will_msg[256] = {"hello Rephile"};						//初始化遗嘱数据
     
     iot_mqtt_init(&Iot_mqtt);									//初始化主题
     mqtt_will_msg_set(&Iot_mqtt, will_msg, strlen(will_msg));	//设置遗嘱

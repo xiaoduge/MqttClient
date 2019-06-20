@@ -75,8 +75,7 @@ typedef union
 typedef struct
 {
 	int len;
-//	char* data;
-    char data[64];
+    char* data;
 } MQTTLenString;
 
 typedef struct
