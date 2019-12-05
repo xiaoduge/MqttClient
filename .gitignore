@@ -1,0 +1,5 @@
+#忽略构建文件夹
+MqttClient-build-desktop-Qt_4_8_5__qt4_8_5____
+
+#忽略.o文件
+*.o
